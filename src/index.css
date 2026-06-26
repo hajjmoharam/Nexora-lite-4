@@ -13,3 +13,14 @@ body {
   background-color: #0F172A;
   color: #E6EDF7;
 }
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

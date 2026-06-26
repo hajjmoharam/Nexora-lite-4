@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wallet, Zap } from 'lucide-react';
+import { Wallet, Zap, Loader2 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from './Logo';
 import { useWallet } from '../context/WalletContext';
@@ -7,7 +7,7 @@ import { useWallet } from '../context/WalletContext';
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const { isConnected, walletAddress, connectWallet } = useWallet();
+  const { isConnected, isConnecting, walletAddress, connectWallet } = useWallet();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,7 +74,9 @@ const Navbar: React.FC = () => {
 
               {/* Wallet Address */}
               <div className="hidden sm:flex items-center px-3 py-1.5 bg-secondary-layer rounded-full">
-                <span className="text-sm font-medium text-text-primary">{walletAddress}</span>
+                <span className="text-sm font-medium text-text-primary">
+                  {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                </span>
               </div>
 
               {/* Profile Avatar */}
@@ -85,11 +87,16 @@ const Navbar: React.FC = () => {
           ) : (
             <button
               onClick={connectWallet}
-              className="flex items-center gap-2 px-4 py-2 lg:px-5 lg:py-2.5 bg-brand-purple hover:bg-brand-purple/80 text-white rounded-lg font-medium transition-all duration-200 hover:scale-105"
+              disabled={isConnecting}
+              className="flex items-center gap-2 px-4 py-2 lg:px-5 lg:py-2.5 bg-brand-purple hover:bg-brand-purple/80 text-white rounded-lg font-medium transition-all duration-200 hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              <Wallet size={18} />
-              <span className="hidden sm:inline">Connect Wallet</span>
-              <span className="sm:hidden">Connect</span>
+              {isConnecting ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Wallet size={18} />
+              )}
+              <span className="hidden sm:inline">{isConnecting ? 'Connecting...' : 'Connect Wallet'}</span>
+              <span className="sm:hidden">{isConnecting ? '...' : 'Connect'}</span>
             </button>
           )}
         </div>

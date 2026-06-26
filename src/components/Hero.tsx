@@ -1,8 +1,20 @@
 import React from 'react';
-import { Zap, Globe, TrendingUp } from 'lucide-react';
+import { Zap, Globe, TrendingUp, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
+import { useWallet } from '../context/WalletContext';
 
 const Hero: React.FC = () => {
+  const { isConnected, isConnecting, connectWallet } = useWallet();
+  const navigate = useNavigate();
+
+  const handleCTAClick = () => {
+    if (isConnected) {
+      navigate('/dashboard');
+    } else {
+      connectWallet();
+    }
+  };
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-bg-primary">
       {/* Grid Pattern */}
@@ -38,12 +50,27 @@ const Hero: React.FC = () => {
         </p>
 
         {/* CTA Button */}
-        <button className="group relative inline-flex items-center gap-3 px-8 py-4 lg:px-10 lg:py-5 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-brand-purple/25">
+        <button
+          onClick={handleCTAClick}
+          disabled={isConnecting}
+          className="group relative inline-flex items-center gap-3 px-8 py-4 lg:px-10 lg:py-5 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-brand-purple/25 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+        >
           <span
             className="absolute inset-0 rounded-xl bg-gradient-brand opacity-100 group-hover:opacity-90 transition-opacity"
           />
-          <Zap size={22} className="relative z-10" />
-          <span className="relative z-10 text-lg">Connect Wallet to Start</span>
+          {isConnecting ? (
+            <>
+              <Loader2 size={22} className="relative z-10 animate-spin" />
+              <span className="relative z-10 text-lg">Connecting...</span>
+            </>
+          ) : (
+            <>
+              <Zap size={22} className="relative z-10" />
+              <span className="relative z-10 text-lg">
+                {isConnected ? 'Go to Dashboard' : 'Connect Wallet to Start'}
+              </span>
+            </>
+          )}
         </button>
 
         {/* Feature Pills */}
